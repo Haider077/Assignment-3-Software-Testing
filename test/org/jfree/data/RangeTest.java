@@ -10,7 +10,9 @@
 //
 package org.jfree.data;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 import java.security.InvalidParameterException;
 
@@ -27,39 +29,49 @@ class RangeTest {
 	}
 	
 	@BeforeEach
-	void setUp() throws Exception {
-	}
+    void setUp() throws Exception {
+        array[0] = 1.0;
+        array[1] = 2.0;
+        array[2] = 3.0;
+        array[3] = 4.0;
+        array[4] = 5.0;
+
+    }
 	
 	//Tests whether combine function can return null
 	@Test
-	void combineTest1(){
-		Range range1 = null;
-		Range range2 = null;
-		
-		assertTrue(exampleRange.combine(range1, range2)== null);
-		
+	void combineNullTest(){
+			Range range1 = null;
+			Range range2 = null;
+			
+			assertEquals(exampleRange.combine(range1, range2), null);
+			
 	}
-	//Tests whether other range is returned if one range is null
+		//Tests whether other range is returned if one range is null
 	@Test
-	void combineTest2(){
-		Range range1 = null;
-		Range range2 = new Range(199.9, 200.0);
-		
-		assertTrue(exampleRange.combine(range1, range2) == range2);
-		
+	void combineRangeReturnIfNullTest(){
+			Range range1 = null;
+			Range range2 = new Range(199.9, 200.0);
+			
+		assertEquals(exampleRange.combine(range1, range2), range2);
+			
 	}
+	
+
 
 	//Tests whether subset ranges are combined correctly
 	@Test
-	void combineTest3(){
+	void combineSubsetRangeTest(){
 		Range range1 = new Range(80.0, 90.0);
 		Range range2 = new Range(50.0, 200.0);
-		Range rangeComb = new Range(65.0,145.0);
+		Range rangeComb = new Range(50.0,200.0);
 		
 		assertEquals(rangeComb,exampleRange.combine(range1, range2));
 	}
+	
+	@Test
 	//Tests whether same ranges are combined correctly
-	void combineTest4() {
+	void combineSameRangeTest() {
 		Range range1 = new Range(80.0, 90.0);
 		Range range2 = new Range(80.0, 90.0);
 		Range rangeComb = new Range(80.0, 90.0);
@@ -70,17 +82,21 @@ class RangeTest {
 	}
 	//Tests whether overlapping ranges are combined correctly
 	@Test
-	void combineTest5(){
+	void combineOverlappingRangesTest(){
 		Range range1 = new Range(80.0, 90.0);
 		Range range2 = new Range(50.0, 60.0);
-		Range rangeComb = new Range(80.0,90.0);
+
+//Your expected range for combineTest5 is incorrect. Resolved
+
+		Range rangeComb = new Range(50.0,90.0);
 		
 		assertEquals(rangeComb,exampleRange.combine(range1, range2));
 	}
 	
+	
 	//Tests low range returns are equal to the lowest possible value in the range
 	@Test
-	void constrainTest1() {
+	void constrainLowRangeValueTest() {
 		Range range1 = new Range(80.0, 90.0);
 		double lowRangeValue = 5.0;
 		
@@ -89,7 +105,7 @@ class RangeTest {
 	
 	//Tests high range returns are equal to the highest possible value in the range
 	@Test
-	void constrainTest2() {
+	void constrainHighRangeValueTest() {
 		Range range1 = new Range(80.0, 90.0);
 		double highRangeValue = 105.0;
 		
@@ -97,7 +113,7 @@ class RangeTest {
 	}
 	//Tests internal range returns are equal to the closests possible value in the range
 	@Test
-	void constrainTest3() {
+	void constrainInternalRangeTest() {
 		Range range1 = new Range(80.0, 90.0);
 		double internalRangeValue = 84.0;
 		
@@ -105,49 +121,53 @@ class RangeTest {
 	}
 	//Tests if contains value is true
 	@Test
-	void containTest1() {
+	void containTrueTest() {
 		Range range1 = new Range(80.0, 90.0);
 		double internalValue = 84.0;
 		assertTrue(range1.contains(internalValue) == true);
 	}
-	
+
 	//Tests if contains external value is false
 	@Test
-	void containTest2() {
+	void containExternalValueFalseTest() {
 		Range range1 = new Range(80.0, 90.0);
 		double externalValue = 55.0;
-		assertTrue(range1.contains(externalValue) == false);
+		assertFalse(range1.contains(externalValue) == true);
 	}
+	
 	//Tests if this method works for any objects as suggested by its documentation
 	@Test
-	void equalTest1() {
+	void equalObjectTest() {
 		Range test = new Range(0,100);
 		Range test1 = new Range(0,50);
 		
-		assertTrue(test.equals(test1) == false);
+		assertFalse(test.equals(test1));
 		
 	}
+	
 	//Tests if this method correctly equates objects
 	@Test
-	void equalTest2() {
+	void equalSameRangeTest() {
 		Range test = new Range(0,100);
 		Range test1 = new Range(0,100);
 		
 		assertTrue(test.equals(test1) == true);
 		
 	}
+	
 	//Tests if this method correctly equates objects
 	@Test
-	void equalTest3() {
+	void equalNullRangeTest() {
 		Range test = null;
 		Range test1 = new Range(0,100);
 		
-		assertTrue(test1.equals(test) == false);
+		assertFalse(test1.equals(test) == true);
 		
 	}
+	
 	//Tests whether expand can handle null values.
 	@Test
-	void expandTest1() {
+	void expandNullTest() {
 		
 		Range test = new Range(0,100);
 		
@@ -156,8 +176,10 @@ class RangeTest {
 		
 	
 	}
+	
+	//tests null to see if it throws a InvalidParameterException 
 	@Test
-	void expandTest2() {
+	void expandInvalidParameterExceptionTest() {
 		Range test = null;
 		exampleRange = new Range(0,100);
 		assertThrows(InvalidParameterException.class,()->{test.expand(exampleRange,0,1);});
@@ -165,63 +187,55 @@ class RangeTest {
 	}
 	//test negative lower bounds
 	@Test
-	void expandTest3() {
+	void expandNegativeLowerBoundTest() {
 		Range test =  new Range(0,100);
 		exampleRange = new Range(0,100);
 		
 		int ngtive = -1;
-		try {
-			test.expand(exampleRange,ngtive,1);
-			assertEquals(5,5); // return true
-		}
-		catch(Exception e) {
-			
-			assertEquals(5,7); //return false
-		}
+
+			test.expand(exampleRange,ngtive,100);
+			assertEquals(exampleRange, test); // return true
+
 	}
 	//test negative lower bounds
 	@Test
-	void expandTest4() {
+	void expandNegativeLowerBoundTest2() {
 		Range test =  new Range(0,100);
 		exampleRange = new Range(0,100);
 		
 		int ngtive = -1;
-		try {
+
 			test.expand(exampleRange,0,ngtive);
-			assertEquals(5,5); // return true
-		}
-		catch(Exception e) {
-			
-			assertEquals(5,7); //return false
-		}
+			assertEquals(test,exampleRange); // return true
+
 	}
 	//test char numbers
 	@Test
-	void expandTest5() {
+	void expandCharNumbersTest() {
 		Range test =  new Range('0','9');
 		exampleRange = new Range('0','5');
+
+
+			test.expand(exampleRange,'0','5');
+			assertEquals(test, exampleRange); // return true
 		
 
-		try {
-			test.expand(exampleRange,'0','5');
-			assertEquals(5,5); // return true
-		}
-		catch(Exception e) {
-			
-			assertEquals(5,7); //return false
-		}
 	}
+	
 	//Tests if range is expanded correctly
 	@Test
-	void expandTest6() {
+	void expandRangeTest() {
 		Range test =  new Range(2,6);
 
 		Range expectedRange = new Range(1,8);
-		assertTrue(test.expand(test,0.25,0.5).equals(expectedRange) == true);
+		assertEquals(test.expand(test,0.25,0.5), (expectedRange));
 	}
+	
+	
+	
 	//Tests null value in the range
 	@Test
-    void expandToIncludeTest1() {
+    void expandToIncludeNullValueTest() {
 		
 		//exercise
 		Range range1 = null;
@@ -240,7 +254,7 @@ class RangeTest {
 	
 	//Tests the same numbers for both the range and the specified value
 	@Test
-    void expandToIncludeTest2() {
+    void expandToIncludeSameNumbersTest() {
 		
 		//exercise
 		Range range1 = new Range(0,0);
@@ -261,7 +275,7 @@ class RangeTest {
 	
 	//Tests the range using char values
 	@Test
-    void expandToIncludeTest3() {
+    void expandToIncludeCharValuesTest() {
 		
 		//exercise
 		Range range1 = new Range('1', '5');
@@ -279,9 +293,26 @@ class RangeTest {
 			
 	}
 	
+	@Test
+	void testIfNumberTrue() {
+        Range range2 = new Range(199.9, 200.0);
+        double value = 1000000;
+        range2.expandToInclude(range2,value);
+
+        if(range2.contains(value / 2) == false) {
+
+        	range2.expandToInclude(range2, value/2);
+            assertEquals(range2.expandToInclude(range2,value).getUpperBound(), value);
+
+
+        }
+
+    }
+	
+	
 	//Tests a negative number in the specified value
 	@Test
-    void expandToIncludeTest4() {
+    void expandToIncludeNegativeNumberTest() {
 		
 		//exercise
 		Range range1 = new Range(1,5);
@@ -302,7 +333,7 @@ class RangeTest {
 	
 	//Tests a specified value that is already within the range
 	@Test
-    void expandToIncludeTest5() {
+    void expandToIncludeValueWithinRangeTest() {
 		
 		//exercise
 		Range range1 = new Range(0,5);
@@ -320,9 +351,39 @@ class RangeTest {
 			
 	}
 	
+
+	
+	
+	//Tests a specified value that is greater than the upper bound of the range
+	
+	//new test to fix this:
+	
+//  else if (value > range.getUpperBound()) {
+//  return new Range(range.getLowerBound(), value);
+//}
+	
+	@Test
+    void expandToIncludeValueGreaterThanRangeUpperBoundTest() {
+		
+		//exercise
+		Range range1 = new Range(0,5);
+
+
+		double specifiedValue = 6;
+		
+		Range rangeTest = range1.expandToInclude(range1, specifiedValue);
+		
+		Range expectedRange = new Range(0,6);
+
+				
+		//verify
+		assertEquals(range1.expandToInclude(range1, specifiedValue), expectedRange);
+			
+	}
+	
 	//Tests integer values for range to see if the central value is double
 	@Test
-    void getCentralValueTest1() {
+    void getCentralValueIntegerRangeValuesTest() {
 		
 		//exercise
 		Range range1 = new Range(3,7);
@@ -333,61 +394,65 @@ class RangeTest {
 			
 	}
 	
-	//Tests range value that is higher in the first value and lower in the second to see if it work	
+
+	//Tests range value that is lower in the first value and higher in the second to see if it work
 	@Test
-    void getCentralValueTest2() {
-		try {
+    void getCentralValueHigherRangeValueInLowerBoundTest() {
+
 		//exercise
-		Range range1 = new Range(5,1);
+		Range range1 = new Range(1,5);	
 		double centralValue = 3.0;
 			
 		//verify
 		assertEquals(range1.getCentralValue(), centralValue);
-		}
-		catch(Exception e) {
-			assertEquals(5,7);//return false
-		}
+
 	}
 	
-	//Tests range values that are equal 
+	//Tests range values that are equal
+	//getCentralValueEqualRangeValueTest(): I do not understand why you are using try-catches. Looks like you are overusing try-catches.
+
 	@Test
-    void getCentralValueTest3() {
+    void getCentralValueEqualRangeTest() {
 		
-		try {
+
 		//exercise
 		Range range1 = new Range(3,3);
 		double centralValue = 3.0;
 				
 		//verify
 		assertEquals(range1.getCentralValue(), centralValue);
-		}
-		catch(Exception e) {
-			assertEquals(5,7);//return false
-		}
+		
+
 			
 	}
 	
+
+	
+	
+	
 	//Tests range value that is null 
-	@Test
-    void getCentralValueTest4() {
-		try {
-		//exercise
-		Range range1 = null;
-		double centralValue = 0;
-				
-		//verify
-		
-		assertEquals(range1.getCentralValue(), centralValue);
-		}
-		catch(Exception e){
-			assertEquals(5,7);//return false
-		}
-	}
+	//getCentralValueTest4() is incorrect. You cannot call a method from a null input. Also, getUpperBoundTest3()
+
+//	@Test
+//    void getCentralValueNullRangeTest() {
+//		try {
+//		//exercise
+//		Range range1 = null;
+//		double centralValue = 0;
+//				
+//		//verify
+//		
+//		assertEquals(range1.getCentralValue(), centralValue);
+//		}
+//		catch(Exception e){
+//			assertEquals(5,7);//return false
+//		}
+//	}
 	
 
 	//Tests length value with both int and double 
 	@Test
-    void getLengthTest1() {
+    void getLengthIntAndDoubleValueTest() {
 		
 		//exercise
 		Range range1 = new Range(0, 10.0);
@@ -400,7 +465,7 @@ class RangeTest {
 	
 	//Tests char values as numbers to see if the length can be calculated 
 	@Test
-    void getLengthTest2() {
+    void getLengthTestCharNumberRange() {
 		
 		//exercise
 		Range range1 = new Range('0', '5');
@@ -414,7 +479,7 @@ class RangeTest {
 	
 	//Tests a really high value like 99999999 
 	@Test
-    void getLengthTest3() {
+    void getLengthTestHighValue() {
 		
 		//exercise
 		Range range1 = new Range(0, 99999999);
@@ -426,28 +491,24 @@ class RangeTest {
 	}
 	
 	
-	//Tests higher number in range first and then lower 
+	//Tests lower number in range first and then higher 
 	@Test
-    void getLowerBoundTest1() {
+    void getLowerBoundLowerNumberTest() {
 		
 		
 				
-		//verify
-		try {
-		//exercise
-		Range range1 = new Range(4,1);
+
+		Range range1 = new Range(1,4);
 		double lowerBoundValue = 1;
 			
 		assertEquals(range1.getLowerBound(), lowerBoundValue);
-		}
-		catch(Exception e) {
-			assertEquals(5 , 7);//returns false test
-		}
+		
+
 	}
 
 	//Tests negative numbers in the range
 	@Test
-    void getLowerBoundTest2() {
+    void getLowerBoundNegativeNumberTest() {
 		
 		//exercise
 		Range range1 = new Range(-5,1);
@@ -460,7 +521,7 @@ class RangeTest {
 	
 	//Tests the same negative numbers in the range
 	@Test
-    void getLowerBoundTest3() {
+    void getLowerBoundSameNegativeNumberTest() {
 		
 		//exercise
 		Range range1 = new Range(-5,-5);
@@ -474,7 +535,7 @@ class RangeTest {
 	
 	//Tests negative numbers in the range
 	@Test
-    void getUpperBoundTest1() {
+    void getUpperBoundNegativeNumberTest() {
 		
 		//exercise
 		Range range1 = new Range(-1,1);
@@ -488,7 +549,7 @@ class RangeTest {
 	
 	//Tests same numbers in the range
 	@Test
-    void getUpperBoundTest2() {
+    void getUpperBoundSameNumberTest() {
 		
 		//exercise
 		Range range1 = new Range(1,1);
@@ -499,36 +560,54 @@ class RangeTest {
 		
 	}
 	
-	//Tests null value as range 
-	@Test
-    void getUpperBoundTest3() {
-		
-		//exercise
-		Range range1 = null;
-		double upperBoundValue = 0;
-				
-		//verify
-		
-		try {
-			assertEquals(range1.getUpperBound(), upperBoundValue);
-		}
-		catch(Exception e) {
-			assertEquals(5 , 7);//returns false test
-		}
-	}
+	
 	
 	private Range comparedRange;
+
+
+	
+
+	 
+	    
+	//new test
 	@Test
-	void testNotOverlappedRange() {
-	 exampleRange = new Range(-1.0, 1.0);
-	 assertFalse(exampleRange.intersects(2.0, 4.0));
+	void testIntersectsValidValue() {
+	 exampleRange = new Range(2.0, 7.0);
+
+	 boolean actualValue = exampleRange.intersects(1.0, 5.0);
+	 boolean expectedValue = true;
+	 
+	 assertEquals(expectedValue, actualValue);	 
+	}
+	
+
+	//new test
+	@Test
+	void testIntersectsUpperBoundary() {
+	 exampleRange = new Range(2.0, 7.0);
+
+	 boolean actualValue = exampleRange.intersects(7.0, 7.0);
+	 boolean expectedValue = false;
+	 
+	 assertEquals(expectedValue, actualValue);	 
+	}
+	
+	//new test
+	@Test
+	void testIntersectsLowerBoundary() {
+	 exampleRange = new Range(2.0, 7.0);
+
+	 boolean actualValue = exampleRange.intersects(2.0, 2.0);
+	 boolean expectedValue = false;
+	 
+	 assertEquals(expectedValue, actualValue);	 
 	}
 	
 	@Test
-	void testOverlappedRange() {
-	 exampleRange = new Range(-2.0, 1.0);
-	 assertTrue(exampleRange.intersects(-1.0, 3.0));
-	}
+    void testIntersectsOverlappedRange() {
+     exampleRange = new Range(-2.0, 1.0);
+     assertTrue(exampleRange.intersects(-1.0, 3.0));
+    }
 	
 	@Test
 	void testShiftNoAllowZeroCrossing1() {
@@ -557,21 +636,40 @@ class RangeTest {
 	}
 	@Test
 	void testShiftNoAllowZeroCrossingWithNullRange() {
-		 exampleRange = null;
-		 try {
-		 comparedRange = Range.shift(exampleRange, 4.0);
+
+		
+			assertThrows(IllegalArgumentException.class, ()-> { 		 
+				 exampleRange = null;
+
+				
+				comparedRange = Range.shift(exampleRange, 4.0);
+			});
+
 		 
 		 
-		 if (exampleRange == null) {
-			 throw  new InvalidParameterException("Null base Range parameter");
-		 }else {
-			 assertEquals(comparedRange,Range.shift(exampleRange, 4.0));
-		 }
-		 }
-		 catch(Exception e) {
-			 
-		 }
+//		 if (exampleRange == null) {
+//			 throw  new InvalidParameterException("Null base Range parameter");
+//		 }else {
+//			 assertEquals(comparedRange,Range.shift(exampleRange, 4.0));
+//		 }
+		 
+	
 	}
+	
+	
+	private Number[] arrayNumberObjects;
+
+	private double[] array = new double [5];
+
+	
+
+	//new test
+    @Test
+    void testLengthOfTwoArrays() {
+        arrayNumberObjects = DataUtilities.createNumberArray(array);
+        assertEquals(array.length, arrayNumberObjects.length);
+        //check if the array of doubles and array of Number objects has the same length
+    }
 	
 	
 	@Test
@@ -604,11 +702,11 @@ class RangeTest {
 		 exampleRange = null;
 		 try {
 		 comparedRange = Range.shift(exampleRange, 4.0, true);
-		 if (exampleRange == null) {
-			 throw new InvalidParameterException("Null base Range parameter");
-		 }else {
-			 assertEquals(comparedRange,Range.shift(exampleRange, 4.0, true));
-		 } 
+//		 if (exampleRange == null) {
+//			 throw new InvalidParameterException("Null base Range parameter");
+//		 }else {
+//			 assertEquals(comparedRange,Range.shift(exampleRange, 4.0, true));
+//		 } 
 		 }
 		 catch(Exception e) {
 			 assertEquals(5,5);
@@ -629,6 +727,56 @@ class RangeTest {
 		comparedRange = new Range(2.0, 4.0);
 		assertEquals(exampleRange.toString(), comparedRange.toString() );
 	}
+	
+	//new test
+	@Test
+	void constructorTestSameValue(){
+		Range actualRange = new Range(1.0,1.0);
+		Range expectedRange = new Range(1.0,1.0);
+		
+		assertEquals(expectedRange, actualRange);
+	}
+	
+	//new test
+	@Test
+	void constructorTestNegativeValue(){
+		Range actualRange = new Range(-2.0,-1.0);
+		Range expectedRange = new Range(-2.0,-1.0);
+		
+		assertEquals(expectedRange, actualRange);
+	}
+	
+	
+	//new test
+	@Test
+    void testRangeCombineMultipleRanges() {
+
+        Range range1 = new Range(0,0);
+        Range range2 = new Range(1,5);
+        Range range3 = new Range(4,10);
+        Range range4 = new Range(0,3);
+
+        Range[] r = new Range[4];
+
+        r[0] = range1;
+        r[1] = range2;
+        r[2] = range3;
+        r[3] = range4;
+
+        for(int i = 0; i < 4; i ++) {
+
+            range1.combine(range1, r[i]);
+            
+
+
+        }
+
+        assertEquals(range1, new Range(0,10));
+
+
+    }
+
+	
 	
 	@AfterEach
 	void tearDown() throws Exception {
