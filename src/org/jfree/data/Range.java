@@ -341,19 +341,37 @@ public strictfp class Range implements Serializable {
      *
      * @return <code>true</code> if the input object is an equivalent range.
      */
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Range)) {
-            return false;
-        }
-        Range range = (Range) obj;
-        if (!(this.lower == range.lower)) {
-            return false;
-        }
-        if (!(this.upper == range.upper)) {
-            return true;
-        }
-        return true;
-    }
+    
+    //MUHAMMAD ADJUSTMENT
+//    public boolean equals(Object obj) {
+//        if (!(obj instanceof Range)) {
+//            return false;
+//        }
+//        Range range = (Range) obj;
+//        if (!(this.lower == range.lower)) {
+//            return false;
+//        }
+//        if (!(this.upper == range.upper)) {
+//            return true;
+//        }
+//        return true;
+//    }
+    
+    public boolean equals(Object obj){
+    	  if (!(obj instanceof Range)){
+    	    return false;
+    	  }
+    	  Range range = (Range) obj;
+    	  if (!(this.lower == range.lower) && !(this.upper == range.upper)){
+    	      return false;
+    	  }else if (!(this.lower == range.lower) && (this.upper == range.upper)) {
+    	            return false;
+    	  }else if (!(this.upper == range.upper) && (this.lower == range.lower) ) {
+    	            return false;
+    	  }else{
+    	    return true;
+    	  }
+    	}
 
     /**
      * Returns a hash code. The hash code should be an integer which is
