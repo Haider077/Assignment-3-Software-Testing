@@ -249,7 +249,7 @@ public strictfp class Range implements Serializable {
      * 
      * @return The expanded range.
      */
-    public static Range expand(Range range, 
+    /*public static Range expand(Range range, 
                                double lowerMargin, double upperMargin) {
         if (range == null) {
             throw new IllegalArgumentException("Null 'range' argument.");   
@@ -259,6 +259,17 @@ public strictfp class Range implements Serializable {
         double upper = length * upperMargin;
         return new Range(range.getLowerBound() - lower, 
                 range.getUpperBound() + upper);
+    }*/
+    //HAIDER ADJUSTMENT
+    public static Range expand(Range range,double lowerMargin, double upperMargin) {
+        if (range == null && !(range instanceof Range)){
+ 
+            throw new IllegalArgumentException("Null 'range' argument.");
+        }
+            double length = range.getLength();
+            double lower = length * lowerMargin;
+            double upper = length * upperMargin;
+            return new Range(range.getLowerBound() - lower, range.getUpperBound() + upper);
     }
 
     /**
