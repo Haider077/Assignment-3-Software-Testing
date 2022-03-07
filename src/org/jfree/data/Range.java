@@ -195,21 +195,39 @@ public strictfp class Range implements Serializable {
      *
      * @return A new range subsuming both input ranges (possibly <code>null</code>).
      */
+    //    public static Range combine(Range range1, Range range2) {
+    //        if (range1 == null) {
+    //            return range2;
+    //        }
+    //        else {
+    //            if (range2 == null) {
+    //                return range2;
+    //            }
+    //            else {
+    //                double l = Math.min(range1.getLowerBound(), 
+    //                        range2.getLowerBound());
+    //                double u = Math.max(range1.getUpperBound(), 
+    //                        range2.getUpperBound());
+    //                return new Range(l, u);
+    //            }
+    //        }
+    //    }
+    //Duc's SUT adjustment
     public static Range combine(Range range1, Range range2) {
         if (range1 == null) {
             return range2;
+        }else if (range2 == null) {
+                return range1; 
+        }else if (range1 == null && range2 == null) {
+
+            return null;
         }
         else {
-            if (range2 == null) {
-                return range2;
-            }
-            else {
                 double l = Math.min(range1.getLowerBound(), 
                         range2.getLowerBound());
                 double u = Math.max(range1.getUpperBound(), 
                         range2.getUpperBound());
                 return new Range(l, u);
-            }
         }
     }
     
