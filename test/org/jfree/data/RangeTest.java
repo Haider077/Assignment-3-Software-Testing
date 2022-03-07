@@ -776,7 +776,29 @@ class RangeTest {
 
     }
 
+	//new test
+	@Test
+	void shiftWithNoZeroCrossingPositive(){
+	      Range range1 = new Range(1,2);
+	      assertEquals(new Range(2,3), Range.shift(range1, 1));
+	}
 	
+	//new test
+	@Test
+	void shiftWithNoZeroCrossingNegative() {
+        Range range1 = new Range(-1,2);
+
+        assertEquals(new Range(0,3), Range.shift(range1, 1));
+        
+	}
+	
+	//new test
+	@Test
+	void shiftWithNoZeroCrossingZero() {
+        Range range1 = new Range(0,2);
+
+        assertEquals(new Range(1,3), Range.shift(range1, 1));
+    }
 	
 	@AfterEach
 	void tearDown() throws Exception {
